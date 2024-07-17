@@ -1,0 +1,24 @@
+{% extends "auctions/layout.html" %}
+{% block body %}
+    <h2>CATEGORY: {{ categoryname|upper }}</h2>
+
+        <div class= "box">
+        {% for list in category %}
+            <div class="container">
+
+                <div class="img_container">
+                    <img class="index_img" src="{{ list.image.url }}" alt="listing">
+                </div>
+                
+                <div class ="img_property">
+                    <h5>Title: {{ list.title }}</h5>
+                    <h5>Price: {{ list.price }}</h5>
+                    <h5>Description: {{ list.description }}</h5>
+                    <a href="{% url 'listing' list.id %}" class="btn btn-primary">VIEW</a>
+                </div>
+            </div>
+        {% empty %}
+            <h2>There are currently no listing </h2>
+        {% endfor %}
+        </div>  
+{% endblock %}

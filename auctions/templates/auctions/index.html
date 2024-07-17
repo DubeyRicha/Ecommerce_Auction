@@ -1,0 +1,31 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+
+    <select class="form-select form-select-lg mb-3" aria-label="Large select example" onchange="window.location.href=this.value;">
+        <option selected disabled>CATEGORIES</option>
+        {% for categoryname in categories %}
+        <option value="{% url 'category' categoryname %}">{{ categoryname|upper }}</option>
+        {% endfor %}   
+    </select>
+    
+
+        <div class= "box">
+        {% for list in listing %}
+            <div class="container">
+
+                <div class="img_container">
+                    <img class="index_img" src="{{ list.image.url }}" alt="listing">
+                </div>
+                
+                <div class ="img_property">
+                    <h5>Title: {{ list.title }}</h5>
+                    <h5>Price: {{ list.price }}</h5>
+                    <h5>Description: {{ list.description }}</h5>
+                    <a href="{% url 'listing' list.id %}" class="btn btn-primary">VIEW</a>
+                </div>
+            </div>
+        {% endfor %}
+        </div>  
+{% endblock %}

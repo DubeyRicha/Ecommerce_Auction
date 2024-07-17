@@ -1,0 +1,109 @@
+{% extends "auctions/layout.html" %}
+{% block body %}
+    
+    <div class="listing_nav">
+        <h1>Listing: {{ listing.title }} </h1>
+        <div>
+            <form action="{% url 'watch' list_id=listing.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="watchlist" value="watchlist_value">
+                <button class="cart" type="submit">
+                    {% if not already_watching %} 
+                        <i class="fa-regular fa-heart"></i>
+                    {% else %}
+                        <i class="fa-solid fa-heart"></i>
+                    {% endif %}
+                </button>
+            </form>
+            
+        </div>
+    </div>
+
+    <div class="listing_container">
+        <div class="list_imgcontainer">
+            <img class="listing_img" src="{{ listing.image.url }}" alt="{{listing.title }}">
+        </div>
+        <div class="listing_property">
+
+            <li>Listing By: {{ listing.seller }}</li>
+            <li>Description: {{ listing.description }}</li>
+            <li>Price: rs.{{ listing.price }}</li>
+            <li>Categort: {{ listing.category }}</li>
+            <li>Fixed bid: {{ listing.fixed_bid }}</li>
+            {% if not listing.current_bid %}
+                <li>current bid: No bids yet</li>
+            {% else %}
+                <li>current bid: {{ listing.current_bid }}</li>
+            {% endif %}
+            
+        </div>
+
+        <div>
+            {% if not listing.active  %}
+                {% if listing.winner == request.user %}}
+                <div class="msg_alert">
+                    <h1>congrats {{ request.user }}!! You won this auction</h1>
+                </div>
+                {% else %}
+                    <div class="msg_alert">
+                        <h1> auction closed </h1>
+                    </div>
+                {% endif %}
+            {% endif %}
+            
+
+            {% if listing.active and not listing.seller == request.user %}
+                
+                <div class="msg_alert">
+                    {{ msg }}
+                </div>
+                
+                {% if not listing.current_bid %}
+                    <p>There are not current bid</p>
+                    <p>Be the first to bid.</p>
+                {% elif listing.winner == request.user %}
+                    <h1> your bid is the highest </h1>
+                {% else %}
+                    <h3> {{ listing.winner }} is the higest bidder </h3> 
+                {% endif %}
+                
+                <form action="{% url 'bid' list_id=listing.id %}" method = "post">
+                    {% csrf_token %}
+                    {{ bidform }}
+                    <input class="btn btn-primary" type="submit" value="place bid">
+                </form>
+            {% endif %}
+
+
+            {% if listing.seller == request.user %}
+                {% if listing.winner %}
+                    <h3>{{ listing.winner }} is the higest bidder</h3> 
+                {% endif %}
+            <form action="{% url 'close' list_id=listing.id %}" method = "post">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-primary" value="Close Listing">
+            </form>
+            {% endif %}
+        </div>
+
+    </div>
+
+
+    <hr class="list_hr">
+    <h2 class="comment"> comments and questions </h2>
+    {% for comment in comments %}
+        <h3>{{ comment.commenter }} - {{ comment.comment_time}} </h3>
+        <p> {{ comment.content }}</p>
+    {% empty %}
+        <p>No comments yet </p>
+    {% endfor %}
+    
+    <div class="add-comment-section">
+        <h3>Add a Comment</h3>
+        <form action="{% url 'comment' list_id=listing.id %}" method="post">
+            {% csrf_token %}
+            {{ commentform.as_p }}
+            <button type="submit">Add Comment</button>
+        </form>
+    </div>
+{% endblock%}

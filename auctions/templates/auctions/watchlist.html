@@ -1,0 +1,23 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>yours watchlist items</h2>
+
+    <div class= "box">
+        {% for item in  watchlists %}
+            <div class="container">
+
+                <div class="img_container">
+                    <img class="index_img" src="{{ item.listing.image.url }}" alt="listing">
+                </div>
+                
+                <div class ="img_property">
+                    <h5>Title: {{ item.listing.title }}</h5>
+                    <h5>Price: {{ item.listing.price }}</h5>
+                    <h5>Description: {{ item.listing.description }}</h5>
+                    <a href="{% url 'listing' item.listing.id %}" class="btn btn-primary">VIEW</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>  
+{% endblock %} 
